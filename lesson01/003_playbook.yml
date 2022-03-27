@@ -1,0 +1,48 @@
+---
+- name: Modify grub.conf
+  hosts: node1.example.com
+  user: ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+
+  tasks:
+  - name: Add net.ifnames=0 to config if absent
+    lineinfile:
+      state: present
+      path: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=(?!.* net\.ifnames))(.*)(\")'
+      line: '\1\2 net.ifnames=0\3'
+
+  - name: Correct ifnames to 0 if set to 1
+    lineinfile:
+      state: present
+      path: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=.+?(?=net\.ifnames=))(net.ifnames)..(.*)(\")'
+      line: '\1\2=0\3\4'
+
+  - name: Add biosdevname=0 to config if absent
+    lineinfile:
+      state: present
+      path: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=(?!.* biosdevname))(.*)(\")'
+      line: '\1\2 biosdevname=0\3'
+  
+  - name: Correct biosdevname to 0 if set to 1
+    lineinfile:
+      state: present
+      path: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=.+?(?=biosdevname=))(biosdevname)..(.*)(\")'
+      line: '\1\2=0\3\4'
+
+  - name: Update grub
+    command: grub2-mkconfig -o /boot/grub2/grub.cfg
+     
+  - name: Here could be restart
+    debug:
+      msg:  "Here could be a restart" 
+...

@@ -1,0 +1,31 @@
+---
+- name:	remove httpd, index-file and disable ports
+  hosts: webservers
+  user:	ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+ 
+  tasks:
+  - name: httpd stop
+    service:
+      name: httpd
+      state: stopped
+      enabled: no
+
+  - name: remove httpd
+    yum:
+      name: httpd
+      state: absent
+
+  - name: remove index.html
+    file:
+      path: /var/www/html/index.html
+      state: absent
+
+  - name: disable ports for http
+    firewalld:
+      service: http
+      state: disabled
+...
+

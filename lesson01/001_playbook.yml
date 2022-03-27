@@ -1,0 +1,44 @@
+---
+- name:	install/configure webserver and firewall
+  hosts: webservers
+  user:	ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+ 
+  tasks:
+  - name: httpd install
+    yum:
+      name: httpd
+      state: present
+
+  - name: webserver start
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+  - name: copy index.html
+    copy:
+      dest: /var/www/html/index.html
+      src: index.html
+      force: no
+
+  - name: install firwalld if necessary
+    yum:
+      name: firewalld
+      state: present
+
+  - name: start firewalld
+    service:
+      name: firewalld
+      state: started
+      enabled: yes
+
+  - name: ports for http enable
+    firewalld:
+      service: http
+      state: enabled
+
+...
+

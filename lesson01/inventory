@@ -1,0 +1,10 @@
+[webservers]
+node1.example.com
+
+[dbservers]
+node1.example.com
+node2.example.com
+
+[servers:children]
+webservers
+dbservers
