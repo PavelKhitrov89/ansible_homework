@@ -1,0 +1,42 @@
+---
+- name:	add users/parameters/passwords (unique for each user)
+  hosts: webservers
+  user:	ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+  vars_files:
+    - vars/alice
+    - vars/bob
+    - vars/carol
+
+  tasks:
+  - name: add Alice user (if not exist)
+    user:
+      state: present
+      create_home: yes
+      name: Alice
+      comment: alice@example.com
+      password: "{{ alice_password | string | password_hash('sha512') }}"
+      update_password: on_create
+
+  - name: add Carol user (if not exist)
+    user:
+      state: present
+      create_home: yes
+      name: Carol
+      comment: carol@example.com
+      password: "{{ carol_password | string | password_hash('sha512') }}"
+      update_password: on_create
+
+  - name: add Bob user (if not exist)
+    user:
+      state: present
+      create_home: yes
+      name: Bob
+      comment: bob@example.com
+      password: "{{ bob_password | string | password_hash('sha512') }}"
+      update_password: on_create
+  
+...
+
