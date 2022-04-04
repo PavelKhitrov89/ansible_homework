@@ -1,0 +1,35 @@
+---
+# tasks file for httpd-install
+- name: Include OS-specific vars
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install httpd
+  package:
+    name: "{{ apache_package_name }}"
+    state: present
+
+- name: copy index.html
+  copy:
+    dest: "{{ index_path }}"
+    content: "this is {{ ansible_nodename }} host"
+    force: yes
+  notify: restart Apache
+
+- name: install firwalld if necessary
+  package:
+    name: firewalld
+    state: present
+
+- name: start firewalld
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: ports for http enable
+  firewalld:
+    service: http
+    state: enabled
+    permanent: yes
+...
+

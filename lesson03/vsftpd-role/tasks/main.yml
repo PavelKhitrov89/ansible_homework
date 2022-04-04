@@ -1,0 +1,68 @@
+---
+# tasks file for vsftpd-role
+- name: Include OS-specific vars (config paths in our case)
+  include_vars: "{{ ansible_os_family }}.yml"
+    
+- name: Install vsftpd
+  package:
+    name: "{{ vsftpd_package }}"
+    state: present
+
+- name: Enable\start vsftpd
+  service:
+    name: vsftpd
+    state: started
+    enabled: yes
+
+- name: Open ports in firewall
+  firewalld:
+    port: "{{ passive_min_port }}-{{ passive_max_port }}/tcp"
+    permanent: yes
+    state: enabled
+  notify: Reload firewall
+
+- name: Create root dir
+  file:
+    path: "{{ ftp_root_path }}"
+    state: directory
+    mode: "0555"
+    owner: ftp
+    group: root
+    force: yes
+
+- name: Create upload dir
+  file:
+    path: "{{ ftp_root_path }}/upload"
+    state: directory
+    mode: "0777"
+    owner: ftp
+    group: root
+    force: yes
+
+- name: Place config file for vsftpd
+  template:
+    src: vsftpd.conf.j2
+    dest: "{{ vsftpd_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart vsftpd
+
+- name: Install utils for SELinux management if not present
+  package: 
+    name: policycoreutils-python-utils
+    state: present
+
+- name: Adjust SELinux parameters
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+
+- name: set content type
+  sefcontext:
+    target: "/var/ftp/pub(/.*)?"
+    setype: public_content_rw_t
+    state: present
+    reload: yes
+...

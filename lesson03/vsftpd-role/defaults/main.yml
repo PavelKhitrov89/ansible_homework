@@ -1,0 +1,8 @@
+---
+# defaults file for vsftpd-role
+vsftpd_package: vsftpd
+vsftp_service_enabled: yes
+vsftp_service_state: started
+ftp_root_path: /var/ftp/pub
+passive_min_port: 40000
+passive_max_port: 40002

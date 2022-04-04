@@ -1,0 +1,30 @@
+# Example config file /etc/vsftpd/vsftpd.conf
+#
+# The default compiled in settings are fairly paranoid. This sample file
+# loosens things up a bit, to make the ftp daemon more usable.
+# Please see vsftpd.conf.5 for all compiled in defaults.
+#
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+xferlog_std_format=YES
+ftpd_banner=Welcome to test FTP service.
+listen=YES
+
+anonymous_enable=YES
+local_enable=NO
+anon_root={{ ftp_root_path }}
+anon_other_write_enable=YES
+anon_mkdir_write_enable=YES
+allow_writeable_chroot=YES
+
+write_enable=YES
+anon_umask=022
+anon_upload_enable=YES
+
+pam_service_name=vsftpd
+userlist_enable=YES
+no_anon_password=YES
+
+pasv_min_port={{passive_min_port}}
+pasv_max_port={{passive_max_port}}

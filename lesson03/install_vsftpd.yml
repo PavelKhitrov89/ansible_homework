@@ -1,0 +1,8 @@
+---
+- name: Install and configure vsftpd via role
+  hosts: node2.example.com
+  user: ansible
+
+  roles:
+    - role: vsftpd-role
+...

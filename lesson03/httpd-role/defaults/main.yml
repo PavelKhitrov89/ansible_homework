@@ -1,0 +1,6 @@
+---
+# defaults file for httpd-install
+apache_state: started
+apach_enabled: yes
+apach_package_state: present
+index_path: /var/www/html/index.html
